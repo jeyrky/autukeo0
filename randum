@@ -7,22 +7,7 @@ end
 
 local function MoveTo(destination)
     local humanoid = plr.Character:WaitForChild("Humanoid")
-
-    -- Sử dụng lệnh flashstep thay vì MoveTo
-    humanoid:Move(Vector3.new(destination.x, destination.y, destination.z))
-
-    -- Đợi cho flashstep hoàn thành
-    humanoid.MoveToFinished:Wait()
-end
-
--- Hàm Flashstep để chuyển đến vị trí một cách nhanh chóng
-local function Flashstep(destination)
-    local humanoid = plr.Character:WaitForChild("Humanoid")
-
-    -- Gửi yêu cầu flashstep đến server
-    rs.Remotes.CommF_:InvokeServer("Flashstep", destination)
-
-    -- Đợi cho flashstep hoàn thành
+    humanoid:MoveTo(destination)
     humanoid.MoveToFinished:Wait()
 end
 
@@ -61,25 +46,31 @@ local function PerformRandomActions()
     end
 end
 
+local function GetRandomDestination()
+    return Vector3.new(
+        math.random(-371.645325, 74.6569214, 416.083344, -0.573776901, -0.0829586238, -0.814799488, 0.00722288759, 0.994305611, -0.10632135, 0.818979859, -0.0668899491, -0.569910407),
+        math.random(-379.836304, 74.6320343, 436.795502, -0.436817884, -0.102599844, -0.893679678, 0.0066964021, 0.993075848, -0.117284231, 0.899524987, -0.0572163165, -0.433106303),
+        math.random(-362.51416, 74.6511688, 386.262421, -0.129422843, -0.0389617272, -0.990823746, -1.87428668e-08, 0.999227762, -0.0392922014, 0.991589546, -0.00508531649, -0.129322901)
+    )
+end
+
 local destinations = {
     Vector3.new(-439.756195, 74.7229309, 334.207611),
     Vector3.new(-430.462463, 74.6348419, 383.055756),
     Vector3.new(-426.655273, 74.6416321, 387.312103),
-    Vector3.new(-362.170715, 74.637352, 388.4216),
+    GetRandomDestination(),  -- Sử dụng hàm GetRandomDestination() cho vị trí thứ 4
 }
 
 SetTeam("Pirates")
 wait(1)
 
 for i, destination in ipairs(destinations) do
-    if i == 4 then
+    MoveTo(destination)
+
+    if i == 3 then
+        wait(6)  -- Dừng lại ở điểm thứ 3 trong 6 giây
+    elseif i == 4 then
         wait(1)  -- Dừng lại 1 giây sau khi đến điểm thứ tư
-        Flashstep(destination)  -- Sử dụng Flashstep thay vì MoveTo
         PerformRandomActions()
-    else
-        MoveTo(destination)
-        if i == 3 then
-            wait(6)  -- Dừng lại ở điểm thứ 3 trong 6 giây
-        end
     end
 end
